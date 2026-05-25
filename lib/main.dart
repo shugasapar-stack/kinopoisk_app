@@ -31,34 +31,34 @@ final authStateProvider = StreamProvider((ref) => ref.watch(authProvider).authSt
 final repoProvider = Provider((ref) => CinemaRepository(ref.watch(authProvider), ref.watch(dbProvider), ref.watch(storageProvider)));
 final moviesProvider = StreamProvider((ref) => ref.watch(repoProvider).movies());
 final favoritesProvider = StreamProvider((ref) {
-  final user = ref.watch(authProvider).currentUser;
+  final user = ref.watch(authStateProvider).valueOrNull;
   return user == null ? Stream.value(<String>[]) : ref.watch(repoProvider).favorites(user.uid);
 });
 final watchlistsProvider = StreamProvider((ref) {
-  final user = ref.watch(authProvider).currentUser;
+  final user = ref.watch(authStateProvider).valueOrNull;
   return user == null ? Stream.value(<Watchlist>[]) : ref.watch(repoProvider).watchlists(user.uid);
 });
 final profileProvider = StreamProvider((ref) {
-  final user = ref.watch(authProvider).currentUser;
+  final user = ref.watch(authStateProvider).valueOrNull;
   return user == null ? Stream.value(null) : ref.watch(repoProvider).profile(user.uid);
 });
 final historyProvider = StreamProvider((ref) {
-  final user = ref.watch(authProvider).currentUser;
+  final user = ref.watch(authStateProvider).valueOrNull;
   return user == null ? Stream.value(<String>[]) : ref.watch(repoProvider).historyItems(user.uid);
 });
 final movieProvider = StreamProvider.family<Movie, String>((ref, id) => ref.watch(repoProvider).movie(id));
 final reviewsProvider = StreamProvider.family<List<Review>, String>((ref, id) => ref.watch(repoProvider).reviews(id));
 final reviewsFeedProvider = StreamProvider((ref) => ref.watch(repoProvider).reviewsFeed());
 final userRatingsProvider = StreamProvider((ref) {
-  final user = ref.watch(authProvider).currentUser;
+  final user = ref.watch(authStateProvider).valueOrNull;
   return user == null ? Stream.value(<UserMovieRating>[]) : ref.watch(repoProvider).userRatings(user.uid);
 });
 final tasksProvider = StreamProvider((ref) {
-  final user = ref.watch(authProvider).currentUser;
+  final user = ref.watch(authStateProvider).valueOrNull;
   return user == null ? Stream.value(<StudentTask>[]) : ref.watch(repoProvider).tasks(user.uid);
 });
 final identityProvider = StreamProvider((ref) {
-  final user = ref.watch(authProvider).currentUser;
+  final user = ref.watch(authStateProvider).valueOrNull;
   return user == null ? Stream.value(StudentIdentity.empty()) : ref.watch(repoProvider).identity(user.uid);
 });
 
@@ -732,7 +732,13 @@ class _MovieDetailsScreenState extends ConsumerState<MovieDetailsScreen> {
               ),
               actions: [
                 IconButton(
-                  onPressed: uid == null ? null : () => ref.read(repoProvider).favorite(uid, movie.id, !isFav),
+                  onPressed: uid == null
+                      ? null
+                      : () async {
+                          await ref.read(repoProvider).favorite(uid, movie.id, !isFav);
+                          ref.invalidate(favoritesProvider);
+                          if (context.mounted) snack(context, isFav ? 'Removed from favorites.' : 'Added to favorites.');
+                        },
                   icon: Icon(isFav ? Icons.favorite : Icons.favorite_border, color: const Color(0xFFFFC400)),
                 ),
               ],
