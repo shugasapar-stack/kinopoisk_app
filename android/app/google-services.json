@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650839756862",
+    "project_id": "copyapp-7d466",
+    "storage_bucket": "copyapp-7d466.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650839756862:android:d180265b1cdef563f9016f",
+        "android_client_info": {
+          "package_name": "com.sapargali.shugila.cineverse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp61lFyXBKpSF82bUBe1cg3Fw0kwgFaLI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
